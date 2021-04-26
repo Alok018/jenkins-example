@@ -1,31 +1,36 @@
+CODE_CHANGES = getGitCHANGES()
 pipeline {
     agent any
 
     stages {
-        stage ('Compile Stage') {
-
+        stage('Build') {
+          when {
+            expression {
+                BRANCH_NAME == 'master' && CODE_CHANGES == true
+            }
+          }
             steps {
-                withMaven(maven : 'maven_3_1_0') {
-                    sh 'mvn clean compile'
-                }
+                echo 'Building the master branch..'
             }
         }
-
-        stage ('Testing Stage') {
-
+        stage('Test') {
+          when {
+            expression {
+                BRANCH_NAME == 'master'
+            }
+          }
             steps {
-                withMaven(maven : 'maven_3_1_0') {
-                    sh 'mvn test'
-                }
+                echo 'Testing the master branch..'
             }
         }
-
-
-        stage ('Deployment Stage') {
+        stage('Deploy') {
+          when {
+            expression {
+                BRANCH_NAME == 'master'
+            }
+          }
             steps {
-                withMaven(maven : 'maven_3_1_0') {
-                    sh 'mvn deploy'
-                }
+                echo 'Deploying the master branch....'
             }
         }
     }
